@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <script src="Scripts/jquery-1.6.4.min.js"></script>
+    <script src="Scripts/jquery.signalR-2.0.3.min.js"></script>
+    <script src="signalr/hubs"></script>
+    
+</head>
+<body>
+    <form>
+        Your nickname: <input type="text" name="userName"><br>
+        <input id="settingNameButton" type="button" value="Set">
+    </form>
+    <ul></ul>
+    <textarea id="sendingMessageTextarea"></textarea>
+    <br/>
+    <button id="sendMessageButton">Send</button>
+
+    <script>
+        $(function () {
+            var chat = $.connection.serverHub;
+            chat.client.broadcastServerInformation = function (message) {
+                $("ul").append("<li><p id='information'><font color='red'>" + message + "</font></p></li>");
+            }
+
+            chat.client.broadcastMessage = function (name, message) {
+                $("ul").append("<li><p id='nickname'><font color='blue'>" + name + ": </font>" +
+                    message + "</p></li>");
+            }
+
+            $.connection.hub.start().done(function () {
+                $("#sendMessageButton").click(function () {
+                    var message = $("#sendingMessageTextarea").val();
+                    chat.server.sendMessage(message);
+                    $("#sendingMessageTextarea").val("");
+                });
+            });
+
+            $.connection.hub.start().done(function () {
+                $("#settingNameButton").click(function () {
+                    var nickname = $("input[name='userName']").val();
+                    chat.server.setUserName(nickname);
+                });
+            });
+
+
+        });
+    </script>
+
+</body>
+</html>
