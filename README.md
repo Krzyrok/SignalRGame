@@ -1,3 +1,3 @@
 # SignalRGame
 
-Project for practice SignalR
+Project for practice SignalR - simple game.
